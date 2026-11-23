@@ -1,0 +1,431 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlantCare AI</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f1f8f1;
+    color: #203b28;
+}
+
+header {
+    background: #176b38;
+    color: white;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.menu-btn {
+    font-size: 28px;
+    cursor: pointer;
+}
+
+#menu {
+    display: none;
+    background: #ffffff;
+    padding: 15px;
+}
+
+#menu button {
+    display: block;
+    width: 100%;
+    padding: 13px;
+    border: none;
+    background: white;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.page {
+    display: none;
+    padding: 20px;
+}
+
+.active {
+    display: block;
+}
+
+.login-box {
+    background: white;
+    max-width: 400px;
+    margin: 65px auto;
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 4px 15px #0002;
+}
+
+input, select {
+    width: 100%;
+    padding: 13px;
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+button.primary {
+    background: #198447;
+    color: white;
+    border: none;
+    padding: 13px 20px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.hero {
+    background: #d9f0dc;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.hero h2 {
+    color: #176b38;
+    margin-bottom: 10px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 13px;
+    margin: 15px 0;
+    box-shadow: 0 3px 10px #0001;
+}
+
+.card h3 {
+    color: #176b38;
+    margin-bottom: 10px;
+}
+
+.card p {
+    line-height: 1.6;
+}
+
+.preview {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    margin-top: 15px;
+    display: none;
+    border-radius: 10px;
+}
+
+.result {
+    background: #e0f4e4;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+    line-height: 1.7;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #56745d;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🌿 PlantCare AI</div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+</header>
+
+<div id="menu">
+    <button onclick="showPage('home')">🏠 Home</button>
+    <button onclick="showPage('detect')">🔍 Plant Disease Detection</button>
+    <button onclick="showPage('care')">🌱 Plant Care Tips</button>
+    <button onclick="showPage('about')">ℹ️ About Us</button>
+    <button onclick="logout()">🚪 Logout</button>
+</div>
+
+<!-- LANGUAGE SELECTION -->
+
+<div class="page active" id="login">
+    <div class="login-box">
+        <h1>🌿 PlantCare AI</h1>
+        <p style="margin:15px 0">Your Smart Plant Health Assistant</p>
+
+        <select id="language" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="te">తెలుగు</option>
+            <option value="hi">हिंदी</option>
+        </select>
+
+        <h3 id="welcome">Welcome!</h3>
+
+        <input type="text" id="username" placeholder="Enter Your Name">
+
+        <input type="email" id="email" placeholder="Enter Email">
+
+        <button class="primary" onclick="login()" id="loginBtn">
+            Get Started
+        </button>
+    </div>
+</div>
+
+<!-- HOME PAGE -->
+
+<div class="page" id="home">
+
+    <div class="hero">
+        <h2 id="heroTitle">Welcome to PlantCare AI 🌿</h2>
+        <p id="heroText">
+            Keep your plants healthy with smart plant care assistance.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>🌱 Plant Disease Detection</h3>
+        <p>Upload a plant image to explore plant health information.</p>
+        <button class="primary" onclick="showPage('detect')">
+            Detect Plant
+        </button>
+    </div>
+
+    <div class="card">
+        <h3>💧 Plant Care Tips</h3>
+        <p>Learn about watering, sunlight and plant maintenance.</p>
+        <button class="primary" onclick="showPage('care')">
+            Explore Tips
+        </button>
+    </div>
+
+</div>
+
+<!-- DETECTION PAGE -->
+
+<div class="page" id="detect">
+
+    <div class="card">
+        <h2>🔍 Plant Disease Detection</h2>
+
+        <p>Select a plant image from your mobile gallery.</p>
+
+        <input type="file" id="plantImage" accept="image/*"
+        onchange="previewImage(event)">
+
+        <img id="preview" class="preview">
+
+        <button class="primary" onclick="analyzePlant()">
+            Analyze Plant
+        </button>
+
+        <div id="result"></div>
+    </div>
+
+</div>
+
+<!-- CARE PAGE -->
+
+<div class="page" id="care">
+
+    <h2>🌱 Plant Care Tips</h2>
+
+    <div class="card">
+        <h3>💧 Watering</h3>
+        <p>Water plants according to their specific needs. Avoid overwatering.</p>
+    </div>
+
+    <div class="card">
+        <h3>☀️ Sunlight</h3>
+        <p>Provide suitable sunlight depending on the plant variety.</p>
+    </div>
+
+    <div class="card">
+        <h3>🌿 Soil</h3>
+        <p>Use suitable soil with proper drainage for healthy plant growth.</p>
+    </div>
+
+    <div class="card">
+        <h3>🍃 Regular Checking</h3>
+        <p>Check leaves and stems regularly for unusual changes.</p>
+    </div>
+
+</div>
+
+<!-- ABOUT PAGE -->
+
+<div class="page" id="about">
+
+    <div class="card">
+        <h2>About PlantCare AI</h2>
+
+        <p>
+        PlantCare AI is a smart plant care assistance website
+        designed to help users learn about plant health,
+        disease awareness and plant maintenance.
+        </p>
+
+        <br>
+
+        <h3>Our Features</h3>
+        <p>🌱 Plant health assistance</p>
+        <p>🔍 Image upload</p>
+        <p>💧 Plant care suggestions</p>
+        <p>🌐 Three language support</p>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 PlantCare AI | Smart Plant Care 🌿
+</footer>
+
+<script>
+
+let currentLanguage = "en";
+
+const translations = {
+en: {
+welcome:"Welcome!",
+login:"Get Started",
+hero:"Welcome to PlantCare AI 🌿",
+text:"Keep your plants healthy with smart plant care assistance.",
+name:"Enter Your Name",
+email:"Enter Email"
+},
+te: {
+welcome:"స్వాగతం!",
+login:"ప్రారంభించండి",
+hero:"PlantCare AI కి స్వాగతం 🌿",
+text:"మీ మొక్కల ఆరోగ్యాన్ని కాపాడుకోండి.",
+name:"మీ పేరు నమోదు చేయండి",
+email:"మీ ఇమెయిల్ నమోదు చేయండి"
+},
+hi: {
+welcome:"स्वागत है!",
+login:"शुरू करें",
+hero:"PlantCare AI में आपका स्वागत है 🌿",
+text:"अपनी पौधों की सेहत का ध्यान रखें।",
+name:"अपना नाम दर्ज करें",
+email:"अपना ईमेल दर्ज करें"
+}
+};
+
+function changeLanguage() {
+
+    currentLanguage = document.getElementById("language").value;
+
+    let t = translations[currentLanguage];
+
+    document.getElementById("welcome").innerText = t.welcome;
+    document.getElementById("loginBtn").innerText = t.login;
+    document.getElementById("heroTitle").innerText = t.hero;
+    document.getElementById("heroText").innerText = t.text;
+    document.getElementById("username").placeholder = t.name;
+    document.getElementById("email").placeholder = t.email;
+}
+
+function login() {
+
+    let name = document.getElementById("username").value;
+    let email = document.getElementById("email").value;
+
+    if(name.trim() === "" || email.trim() === "") {
+        alert("Please enter your name and email!");
+        return;
+    }
+
+    document.getElementById("login").classList.remove("active");
+    showPage("home");
+
+    alert("Welcome " + name + "!");
+}
+
+function showPage(page) {
+
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+    });
+
+    document.getElementById(page).classList.add("active");
+
+    document.getElementById("menu").style.display = "none";
+}
+
+function toggleMenu() {
+
+    let menu = document.getElementById("menu");
+
+    menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+}
+
+function logout() {
+
+    document.getElementById("menu").style.display = "none";
+    showPage("login");
+}
+
+function previewImage(event) {
+
+    let file = event.target.files[0];
+
+    if(file) {
+
+        let reader = new FileReader();
+
+        reader.onload = function(e) {
+
+            let img = document.getElementById("preview");
+
+            img.src = e.target.result;
+            img.style.display = "block";
+
+            document.getElementById("result").innerHTML = "";
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function analyzePlant() {
+
+    let file = document.getElementById("plantImage").files[0];
+
+    if(!file) {
+        alert("Please upload a plant image first!");
+        return;
+    }
+
+    document.getElementById("result").innerHTML = `
+    <div class="result">
+    <h3>🌿 Image Uploaded Successfully!</h3>
+    <p>Your plant image is ready for analysis.</p>
+    <p><b>Note:</b> Actual AI disease detection is not connected yet.
+    This is a frontend demo. An AI model needs to be integrated
+    to identify plant diseases accurately.</p>
+    </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>
